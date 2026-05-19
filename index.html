@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SplashWash — Office Parking Car Care</title>
+<title>Carwaash — Office Parking Car Care</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -585,13 +585,129 @@
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--amber-d); }
+
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform .3s, opacity .3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE MENU ── */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: rgba(9,8,7,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 24px;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 99;
+  }
+  html[data-theme="light"] .mobile-menu { background: rgba(254,252,243,0.97); }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: color .2s;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { color: var(--amber); }
+  .mobile-menu .btn { margin-top: 8px; justify-content: center; width: 100%; }
+
+  /* ── TABLET: max-width 1024px ── */
+  @media (max-width: 1024px) {
+    nav { padding: 16px 28px; }
+    section { padding: 80px 28px; }
+    footer { padding: 48px 28px 24px; }
+    .stats-bar { padding: 0 28px; grid-template-columns: repeat(2, 1fr); }
+    .stat-item:nth-child(2) { border-right: none; }
+    .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+    .stat-item:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .plans-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+    .plan-card.featured { transform: scale(1); }
+    .plan-card.featured:hover { transform: translateY(-4px); }
+    .why-grid { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+
+  /* ── MOBILE: max-width 768px ── */
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .hamburger { display: flex; }
+
+    section { padding: 64px 20px; }
+    .section-header { margin-bottom: 40px; }
+    footer { padding: 40px 20px 24px; }
+    .stats-bar { padding: 0 20px; }
+
+    #hero { padding: 100px 20px 60px; }
+    .hero-sub { font-size: 17px; }
+    .btn-lg { padding: 14px 28px; font-size: 14px; }
+
+    .steps { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+
+    .why-item { padding: 32px 24px; }
+    .step { padding: 32px 24px; }
+    .service-card { padding: 28px 24px; }
+    .plan-card { padding: 32px 24px; }
+    .testi-card { padding: 28px 24px; }
+
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .footer-desc { max-width: 100%; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .footer-links { flex-direction: column; gap: 8px; }
+
+    .store-btns { flex-direction: column; align-items: center; }
+    .store-btn { width: 100%; max-width: 280px; }
+  }
+
+  /* ── SMALL MOBILE: max-width 480px ── */
+  @media (max-width: 480px) {
+    section { padding: 56px 16px; }
+    footer { padding: 36px 16px 20px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 0 16px; }
+    .stat-num { font-size: 36px; }
+    .stat-item { padding: 20px 12px; }
+    .hero-ctas { flex-direction: column; }
+    .hero-ctas .btn { width: 100%; justify-content: center; }
+    .plans-grid { max-width: 100%; }
+    .footer-grid { gap: 24px; }
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav id="navbar">
-  <a href="#" class="nav-logo">Splash<span>Wash</span></a>
+  <a href="#" class="nav-logo">Car<span>waash</span></a>
   <ul class="nav-links">
     <li><a href="#how">How it works</a></li>
     <li><a href="#services">Services</a></li>
@@ -602,8 +718,21 @@
     <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light/dark mode">
       <span id="theme-icon">☀️</span>
     </button>
-    <a href="#app-cta" class="btn">Download App</a>
+    <a href="#app-cta" class="btn nav-cta">Download App</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#how" onclick="closeMenu()">How it works</a>
+  <a href="#services" onclick="closeMenu()">Services</a>
+  <a href="#plans" onclick="closeMenu()">Plans</a>
+  <a href="#buildings" onclick="closeMenu()">Buildings</a>
+  <a href="#app-cta" class="btn" onclick="closeMenu()">Download App</a>
+</div>
 </nav>
 
 <!-- HERO -->
@@ -618,7 +747,7 @@
       Your car,<br><span class="accent">cleaned</span><br>while you work.
     </h1>
     <p class="hero-sub">
-      SplashWash comes to your office parking lot. Steam-clean your car during office hours — no water, no mess, no effort from you.
+      Carwaash comes to your office parking lot. Steam-clean your car during office hours — no water, no mess, no effort from you.
     </p>
     <div class="hero-ctas">
       <a href="#app-cta" class="btn btn-lg">Get Started</a>
@@ -790,12 +919,12 @@
   </div>
 </section>
 
-<!-- WHY SPLASHWASH -->
+<!-- WHY CARWAASH -->
 <section id="why">
   <div class="container">
     <div class="section-header reveal">
       <p class="label">Why we're different</p>
-      <h2 class="display">The SplashWash difference</h2>
+      <h2 class="display">The Carwaash difference</h2>
     </div>
     <div class="why-grid reveal">
       <div class="why-item">
@@ -896,7 +1025,7 @@
   <div class="container">
     <p class="label reveal">Get the app</p>
     <h2 class="display reveal">Ready to drive clean?</h2>
-    <p class="reveal">Download the SplashWash app, enter your building, pick your plan and you're done.</p>
+    <p class="reveal">Download the Carwaash app, enter your building, pick your plan and you're done.</p>
     <div class="store-btns reveal">
       <a class="store-btn">
         <span class="store-btn-icon">🍎</span>
@@ -921,7 +1050,7 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo">Splash<span>Wash</span></div>
+        <div class="footer-logo">Car<span>waash</span></div>
         <p class="footer-desc">Premium steam car care for office parking lots across Hyderabad. Clean car, zero effort.</p>
       </div>
       <div class="footer-col">
@@ -953,28 +1082,45 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 SplashWash. All rights reserved. Hyderabad, Telangana, India.</p>
+      <p>© 2026 Carwaash. All rights reserved. Hyderabad, Telangana, India.</p>
       <div class="footer-links">
         <a href="tel:+918500190000">+91 85001 90000</a>
-        <a href="mailto:hello@splashwash.in">hello@splashwash.in</a>
+        <a href="mailto:hello@carwaash.in">hello@carwaash.in</a>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
+  // Hamburger menu
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const hamburger = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    hamburger.classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+
+  // Close mobile menu on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeMenu();
+  });
+
   // Theme toggle
   function toggleTheme() {
     const html = document.documentElement;
     const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     html.setAttribute('data-theme', next);
     document.getElementById('theme-icon').textContent = next === 'light' ? '🌙' : '☀️';
-    localStorage.setItem('sw-theme', next);
+    localStorage.setItem('cw-theme', next);
   }
 
   // Load saved theme on page load
   (function() {
-    const saved = localStorage.getItem('sw-theme') || 'dark';
+    const saved = localStorage.getItem('cw-theme') || 'dark';
     document.documentElement.setAttribute('data-theme', saved);
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('theme-icon').textContent = saved === 'light' ? '🌙' : '☀️';
