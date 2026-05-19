@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- Built using the frontend-design skill: /mnt/skills/public/frontend-design/SKILL.md -->
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,6 +19,46 @@
     --muted:   #6E6550;
     --border:  #272310;
     --radius:  14px;
+  }
+
+  /* ── LIGHT MODE ── */
+  html[data-theme="light"] {
+    --bg:      #FEFCF3;
+    --surface: #F5F0E0;
+    --card:    #FFFFFF;
+    --amber:   #C88000;
+    --amber-b: #E09400;
+    --amber-d: #9A6000;
+    --text:    #1A1400;
+    --muted:   #7A6030;
+    --border:  #DDD090;
+  }
+  html[data-theme="light"] nav.scrolled {
+    background: rgba(254,252,243,0.95);
+  }
+  html[data-theme="light"] .step:hover { background: #FFFAE8; }
+  html[data-theme="light"] .plan-card.featured {
+    background: linear-gradient(160deg, #FFF8D0 0%, #FFE880 100%);
+  }
+  html[data-theme="light"] .why-item:hover { background: #FFFBE8; }
+  html[data-theme="light"] #app-cta {
+    background: linear-gradient(135deg, #FFF3C0 0%, #FFE070 50%, #FFF3C0 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  html[data-theme="light"] .store-btn { background: #FFF5D8; }
+  html[data-theme="light"] .hero-bg {
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(200,128,0,0.07) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(200,128,0,0.03) 60px, rgba(200,128,0,0.03) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(200,128,0,0.03) 60px, rgba(200,128,0,0.03) 61px);
+  }
+
+  /* ── SMOOTH THEME TRANSITION ── */
+  body, nav, section, footer, .stats-bar,
+  .step, .service-card, .plan-card, .why-item,
+  .testi-card, .store-btn, .building-tag {
+    transition: background-color .3s ease, border-color .3s ease, color .3s ease;
   }
 
   html { scroll-behavior: smooth; }
@@ -525,6 +566,20 @@
     transform: translateY(0);
   }
 
+  /* ── THEME TOGGLE ── */
+  .theme-btn {
+    width: 40px; height: 40px;
+    background: rgba(233,168,0,0.1);
+    border: 1px solid rgba(233,168,0,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+    flex-shrink: 0;
+  }
+  .theme-btn:hover { background: rgba(233,168,0,0.22); }
+
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -543,7 +598,12 @@
     <li><a href="#plans">Plans</a></li>
     <li><a href="#buildings">Buildings</a></li>
   </ul>
-  <a href="#app-cta" class="btn">Download App</a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" aria-label="Toggle light/dark mode">
+      <span id="theme-icon">☀️</span>
+    </button>
+    <a href="#app-cta" class="btn">Download App</a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -903,6 +963,24 @@
 </footer>
 
 <script>
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-icon').textContent = next === 'light' ? '🌙' : '☀️';
+    localStorage.setItem('sw-theme', next);
+  }
+
+  // Load saved theme on page load
+  (function() {
+    const saved = localStorage.getItem('sw-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('theme-icon').textContent = saved === 'light' ? '🌙' : '☀️';
+    });
+  })();
+
   // Nav scroll effect
   const nav = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
