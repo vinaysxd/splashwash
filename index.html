@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SplashWash — Office Parking Car Care</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #090807;
+    --surface: #131109;
+    --card:    #1A1710;
+    --amber:   #E9A800;
+    --amber-b: #FFB81A;
+    --amber-d: #B07E00;
+    --text:    #F0E8D0;
+    --muted:   #6E6550;
+    --border:  #272310;
+    --radius:  14px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .display {
+    font-family: Impact, 'Arial Narrow Bold', 'Haettenschweiler', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 0.92;
+  }
+
+  .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    transition: background .3s, backdrop-filter .3s, border-color .3s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(9,8,7,0.92);
+    backdrop-filter: blur(12px);
+    border-color: var(--border);
+  }
+  .nav-logo {
+    font-family: Impact, sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--amber); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px;
+    background: var(--amber);
+    color: #0A0800;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .btn:hover { background: var(--amber-b); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--amber);
+    border: 1.5px solid var(--amber);
+  }
+  .btn-outline:hover { background: var(--amber); color: #0A0800; }
+  .btn-lg { padding: 16px 40px; font-size: 15px; border-radius: 10px; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(233,168,0,0.08) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(233,168,0,0.015) 60px, rgba(233,168,0,0.015) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(233,168,0,0.015) 60px, rgba(233,168,0,0.015) 61px);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(233,168,0,0.1);
+    border: 1px solid rgba(233,168,0,0.25);
+    border-radius: 100px;
+    padding: 6px 16px 6px 10px;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+  .hero-badge-dot {
+    width: 8px; height: 8px;
+    background: var(--amber);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero-badge span { font-size: 12px; color: var(--amber); font-weight: 500; letter-spacing: 0.06em; }
+  .hero-headline {
+    font-size: clamp(64px, 10vw, 128px);
+    max-width: 900px;
+    margin-bottom: 28px;
+    position: relative; z-index: 1;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-headline .accent { color: var(--amber); }
+  .hero-sub {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 44px;
+    line-height: 1.7;
+    animation: fadeUp .8s .15s ease both;
+    position: relative; z-index: 1;
+  }
+  .hero-ctas {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp .8s .3s ease both;
+    position: relative; z-index: 1;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    text-align: center;
+  }
+  .stat-item {
+    padding: 32px 24px;
+    border-right: 1px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: Impact, sans-serif;
+    font-size: 48px;
+    letter-spacing: 0.02em;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 48px; }
+  .section-header { margin-bottom: 64px; }
+  .section-header h2 { font-size: clamp(40px, 5vw, 64px); margin-top: 12px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* ── HOW IT WORKS ── */
+  #how { background: var(--surface); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .step {
+    background: var(--card);
+    padding: 40px 32px;
+    position: relative;
+    transition: background .2s;
+  }
+  .step:hover { background: #221F14; }
+  .step-num {
+    font-family: Impact, sans-serif;
+    font-size: 72px;
+    color: rgba(233,168,0,0.12);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+  .step h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .step-icon {
+    width: 44px; height: 44px;
+    background: rgba(233,168,0,0.1);
+    border: 1px solid rgba(233,168,0,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--bg); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .service-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    transition: border-color .2s, transform .2s;
+    cursor: default;
+  }
+  .service-card:hover {
+    border-color: rgba(233,168,0,0.3);
+    transform: translateY(-4px);
+  }
+  .service-icon {
+    width: 52px; height: 52px;
+    background: rgba(233,168,0,0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+  .service-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .service-card p { font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px; }
+  .service-time {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(233,168,0,0.08);
+    border: 1px solid rgba(233,168,0,0.15);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--amber);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PLANS ── */
+  #plans { background: var(--surface); }
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .plan-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    transition: transform .2s;
+  }
+  .plan-card.featured {
+    background: linear-gradient(160deg, #1E1900 0%, #2A2200 100%);
+    border-color: var(--amber);
+    transform: scale(1.04);
+    position: relative;
+  }
+  .plan-card.featured:hover { transform: scale(1.04) translateY(-4px); }
+  .plan-card:not(.featured):hover { transform: translateY(-4px); }
+  .plan-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--amber);
+    color: #0A0800;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .plan-name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .plan-price {
+    font-family: Impact, sans-serif;
+    font-size: 56px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .plan-price sup { font-size: 24px; vertical-align: super; }
+  .plan-price sub { font-size: 18px; color: var(--muted); }
+  .plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 28px; margin-top: 8px; }
+  .plan-features { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; }
+  .plan-features li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--text);
+  }
+  .plan-features li::before {
+    content: '✓';
+    width: 20px; height: 20px;
+    background: rgba(233,168,0,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    text-align: center;
+    line-height: 20px;
+  }
+  .plan-coupon {
+    background: rgba(233,168,0,0.08);
+    border: 1px dashed rgba(233,168,0,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+
+  /* ── WHY US ── */
+  #why { background: var(--bg); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .why-item {
+    background: var(--card);
+    padding: 44px 40px;
+    transition: background .2s;
+  }
+  .why-item:hover { background: #1E1C12; }
+  .why-icon {
+    font-size: 32px;
+    margin-bottom: 18px;
+    display: block;
+  }
+  .why-item h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+  .why-item p { font-size: 15px; color: var(--muted); line-height: 1.75; }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background: var(--surface); }
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .testi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    transition: border-color .2s;
+  }
+  .testi-card:hover { border-color: rgba(233,168,0,0.2); }
+  .stars { color: var(--amber); font-size: 16px; margin-bottom: 18px; letter-spacing: 2px; }
+  .testi-card blockquote {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  .testi-author { display: flex; align-items: center; gap: 14px; }
+  .testi-avatar {
+    width: 44px; height: 44px;
+    background: rgba(233,168,0,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Impact, sans-serif;
+    font-size: 20px;
+    color: var(--amber);
+    border: 1.5px solid rgba(233,168,0,0.25);
+    flex-shrink: 0;
+  }
+  .testi-name { font-weight: 700; font-size: 15px; }
+  .testi-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── APP CTA ── */
+  #app-cta {
+    background: linear-gradient(135deg, #1C1600 0%, #2A2000 50%, #1C1600 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  #app-cta h2 { font-size: clamp(36px, 5vw, 64px); margin: 16px 0; }
+  #app-cta p { font-size: 18px; color: var(--muted); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .store-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .store-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: #141200;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 24px;
+    color: var(--text);
+    text-decoration: none;
+    transition: border-color .2s, transform .15s;
+    cursor: pointer;
+  }
+  .store-btn:hover { border-color: var(--amber); transform: translateY(-2px); }
+  .store-btn-icon { font-size: 28px; }
+  .store-btn-text span { display: block; }
+  .store-btn-text .small { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .store-btn-text .big { font-size: 17px; font-weight: 700; }
+
+  /* ── BUILDINGS ── */
+  #buildings { background: var(--bg); }
+  .buildings-row {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: 40px;
+  }
+  .building-tag {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: var(--muted);
+    transition: border-color .2s, color .2s;
+  }
+  .building-tag:hover { border-color: var(--amber); color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 60px 48px 32px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-logo {
+    font-family: Impact, sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .footer-logo span { color: var(--amber); }
+  .footer-desc { font-size: 14px; color: var(--muted); line-height: 1.75; max-width: 280px; }
+  .footer-col h4 {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-col a {
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color .2s;
+    opacity: 0.7;
+  }
+  .footer-col a:hover { color: var(--amber); opacity: 1; }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom p { font-size: 13px; color: var(--muted); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--amber); }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--amber-d); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Splash<span>Wash</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#plans">Plans</a></li>
+    <li><a href="#buildings">Buildings</a></li>
+  </ul>
+  <a href="#app-cta" class="btn">Download App</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="container">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Now live in Hyderabad office parks</span>
+    </div>
+    <h1 class="display hero-headline">
+      Your car,<br><span class="accent">cleaned</span><br>while you work.
+    </h1>
+    <p class="hero-sub">
+      SplashWash comes to your office parking lot. Steam-clean your car during office hours — no water, no mess, no effort from you.
+    </p>
+    <div class="hero-ctas">
+      <a href="#app-cta" class="btn btn-lg">Get Started</a>
+      <a href="#how" class="btn btn-outline btn-lg">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar reveal">
+  <div class="stat-item">
+    <div class="stat-num">24+</div>
+    <div class="stat-label">Office buildings</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">1,200+</div>
+    <div class="stat-label">Happy subscribers</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">18K+</div>
+    <div class="stat-label">Cars cleaned</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">4.9★</div>
+    <div class="stat-label">Average rating</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">Simple process</p>
+      <h2 class="display">How it works</h2>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🏢</div>
+        <h3>Park as usual</h3>
+        <p>Drive to work and park in your usual spot. No change to your routine.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">📍</div>
+        <h3>Drop your slot</h3>
+        <p>Open the app and update your level and slot number for the day. Takes 10 seconds.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">✨</div>
+        <h3>We clean it</h3>
+        <p>Our team finds your car and performs a professional steam clean during office hours.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-icon">🚗</div>
+        <h3>Drive off clean</h3>
+        <p>You get notified when it's done. Walk to your car and drive away spotless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">What we offer</p>
+      <h2 class="display">Our services</h2>
+    </div>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <div class="service-icon">💨</div>
+        <h3>Exterior Steam Clean</h3>
+        <p>Full waterless steam clean of the car exterior including body, windows, tyres and rims. Zero water runoff — safe for indoor parking.</p>
+        <span class="service-time">⏱ Approx. 30 mins</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🪣</div>
+        <h3>Interior Deep Clean</h3>
+        <p>Complete interior vacuum, dashboard wipe, seat clean, and air vent sanitisation. Scheduled weekly or fortnightly on request.</p>
+        <span class="service-time">⏱ Approx. 60 mins</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💎</div>
+        <h3>Full Detail Package</h3>
+        <p>Our premium in-bay service at the onsite detailing center. Exterior polish, interior deep clean, leather conditioning and more.</p>
+        <span class="service-time">⏱ Approx. 120 mins</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🛡️</div>
+        <h3>Paint Protection</h3>
+        <p>High-gloss ceramic coating applied in our dedicated detailing bay. Protects against UV, scratches, and daily grime.</p>
+        <span class="service-time">⏱ Approx. 180 mins</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔆</div>
+        <h3>Headlight Restoration</h3>
+        <p>Restore cloudy or yellowed headlights to near-factory clarity. Improves visibility and your car's appearance significantly.</p>
+        <span class="service-time">⏱ Approx. 45 mins</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🌀</div>
+        <h3>Engine Bay Clean</h3>
+        <p>Safe, waterless engine bay degreasing and wipe-down. Makes your car look great under the hood and helps spot leaks early.</p>
+        <span class="service-time">⏱ Approx. 60 mins</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBSCRIPTION PLANS -->
+<section id="plans">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">Pricing</p>
+      <h2 class="display">Pick your plan</h2>
+    </div>
+    <div class="plans-grid reveal">
+      <!-- One-off -->
+      <div class="plan-card">
+        <p class="plan-name">One-off</p>
+        <div class="plan-price"><sup>₹</sup>399<sub>/wash</sub></div>
+        <p class="plan-desc">Book a single clean whenever you need it. No commitment.</p>
+        <ul class="plan-features">
+          <li>Exterior steam clean</li>
+          <li>Same-day booking</li>
+          <li>Job completion photo</li>
+          <li>SMS notification</li>
+        </ul>
+        <a href="#app-cta" class="btn btn-outline" style="width:100%; justify-content:center;">Book a Wash</a>
+      </div>
+
+      <!-- Daily - featured -->
+      <div class="plan-card featured">
+        <span class="plan-badge">Most Popular</span>
+        <p class="plan-name">Daily — 5 days/week</p>
+        <div class="plan-price"><sup>₹</sup>1,999<sub>/mo</sub></div>
+        <p class="plan-desc">Monday to Friday, every working day. Best value.</p>
+        <div class="plan-coupon">🏢 Company coupon? Apply at checkout for exclusive corporate discounts.</div>
+        <ul class="plan-features">
+          <li>Exterior steam clean daily</li>
+          <li>Interior clean once/month</li>
+          <li>Priority scheduling</li>
+          <li>Skip-a-day feature</li>
+          <li>Dedicated QR pass</li>
+          <li>Monthly billing</li>
+        </ul>
+        <a href="#app-cta" class="btn" style="width:100%; justify-content:center;">Subscribe Now</a>
+      </div>
+
+      <!-- 3 days -->
+      <div class="plan-card">
+        <p class="plan-name">3 days/week</p>
+        <div class="plan-price"><sup>₹</sup>1,299<sub>/mo</sub></div>
+        <p class="plan-desc">Mon, Wed, Fri cleans. Great if daily feels like too much.</p>
+        <div class="plan-coupon">🏢 Company coupon? Apply at checkout for exclusive corporate discounts.</div>
+        <ul class="plan-features">
+          <li>Exterior steam clean ×3/week</li>
+          <li>Interior clean on request</li>
+          <li>Skip-a-day feature</li>
+          <li>Dedicated QR pass</li>
+          <li>Monthly billing</li>
+        </ul>
+        <a href="#app-cta" class="btn btn-outline" style="width:100%; justify-content:center;">Subscribe Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY SPLASHWASH -->
+<section id="why">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">Why we're different</p>
+      <h2 class="display">The SplashWash difference</h2>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-item">
+        <span class="why-icon">💧</span>
+        <h3>100% Waterless</h3>
+        <p>Our steam and waterless technology uses just 1–2 litres per car versus 200 litres in a traditional wash. Safe for indoor parking — no drainage needed.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">🏢</span>
+        <h3>We come to your car</h3>
+        <p>No need to drive to a car wash. We work in your office parking lot while you focus on your day. Your car is ready when you are.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">📸</span>
+        <h3>Before & after photos</h3>
+        <p>Every clean is documented with photos. You can see exactly what was done and we're fully accountable for the condition of your car.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">🎟️</span>
+        <h3>Company perks friendly</h3>
+        <p>Partnered with leading Hyderabad employers. Apply your company coupon at signup for subsidised rates as part of your employee benefits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">Customer love</p>
+      <h2 class="display">What they say</h2>
+    </div>
+    <div class="testi-grid reveal">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I park at Raheja Mindspace and my car is always spotless when I finish work. The daily subscription is genuinely the best ₹1,999 I spend every month."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar">A</div>
+          <div>
+            <div class="testi-name">Arjun S.</div>
+            <div class="testi-role">Software Engineer, Mindspace</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"My company gave us coupon codes and the subscription basically costs me nothing. The car is cleaner than it's ever been. Highly recommend to anyone in an IT park."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar">P</div>
+          <div>
+            <div class="testi-name">Priya M.</div>
+            <div class="testi-role">Product Manager, HITEC City</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The skip-a-day feature is brilliant. Work from home on Fridays? Just skip it. The app is simple and the team is reliable. Never missed a clean in 3 months."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar">R</div>
+          <div>
+            <div class="testi-name">Rahul K.</div>
+            <div class="testi-role">Finance Analyst, Nanakramguda</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDINGS -->
+<section id="buildings">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="label">Our locations</p>
+      <h2 class="display">Buildings we serve</h2>
+    </div>
+    <p class="reveal" style="color:var(--muted); font-size:16px; margin-top:-40px; margin-bottom:0">
+      Currently active in these Hyderabad office parks. More coming soon.
+    </p>
+    <div class="buildings-row reveal">
+      <div class="building-tag">Raheja Mindspace</div>
+      <div class="building-tag">HITEC City Tower</div>
+      <div class="building-tag">Nanakramguda Financial District</div>
+      <div class="building-tag">Salarpuria Sattva</div>
+      <div class="building-tag">Phoenix Aquila</div>
+      <div class="building-tag">Divyasree NXT</div>
+      <div class="building-tag">RMZ Millennia</div>
+      <div class="building-tag">WaveRock</div>
+      <div class="building-tag">+ More coming</div>
+    </div>
+  </div>
+</section>
+
+<!-- APP CTA -->
+<section id="app-cta">
+  <div class="container">
+    <p class="label reveal">Get the app</p>
+    <h2 class="display reveal">Ready to drive clean?</h2>
+    <p class="reveal">Download the SplashWash app, enter your building, pick your plan and you're done.</p>
+    <div class="store-btns reveal">
+      <a class="store-btn">
+        <span class="store-btn-icon">🍎</span>
+        <div class="store-btn-text">
+          <span class="small">Download on the</span>
+          <span class="big">App Store</span>
+        </div>
+      </a>
+      <a class="store-btn">
+        <span class="store-btn-icon">▶</span>
+        <div class="store-btn-text">
+          <span class="small">Get it on</span>
+          <span class="big">Google Play</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Splash<span>Wash</span></div>
+        <p class="footer-desc">Premium steam car care for office parking lots across Hyderabad. Clean car, zero effort.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Exterior Clean</a></li>
+          <li><a href="#services">Interior Clean</a></li>
+          <li><a href="#services">Full Detail</a></li>
+          <li><a href="#services">Paint Protection</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">For Businesses</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cancellation Policy</a></li>
+          <li><a href="#">Refund Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 SplashWash. All rights reserved. Hyderabad, Telangana, India.</p>
+      <div class="footer-links">
+        <a href="tel:+918500190000">+91 85001 90000</a>
+        <a href="mailto:hello@splashwash.in">hello@splashwash.in</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
